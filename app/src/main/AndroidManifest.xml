@@ -24,9 +24,9 @@
             android:name=".SdlService"
             android:enabled="true" />
         <service
-            android:name=".SdlRouterService"
+            android:name="com.ghelius.sdl.test.sdltest.SdlRouterService"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:process="com.smartdevicelink.router" />
 
         <receiver

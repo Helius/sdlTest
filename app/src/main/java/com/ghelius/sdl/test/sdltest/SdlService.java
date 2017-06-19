@@ -82,6 +82,7 @@ public class SdlService extends Service implements IProxyListenerALM {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         boolean forceConnect = intent !=null && intent.getBooleanExtra(TransportConstants.FORCE_TRANSPORT_CONNECTED, false);
         if (proxy == null) {
             try {
@@ -102,6 +103,27 @@ public class SdlService extends Service implements IProxyListenerALM {
 
         //use START_STICKY because we want the SDLService to be explicitly started and stopped as needed.
         return START_STICKY;
+
+//        boolean forceConnect = intent !=null && intent.getBooleanExtra(TransportConstants.FORCE_TRANSPORT_CONNECTED, false);
+//        if (proxy == null) {
+//            try {
+//                //Create a new proxy using Bluetooth transport
+//                //The listener, app name,
+//                //whether or not it is a media app and the applicationId are supplied.
+//                proxy = new SdlProxyALM(this.getBaseContext(),this, "Hello SDL App", true, "8675309");
+//            } catch (SdlException e) {
+//                //There was an error creating the proxy
+//                if (proxy == null) {
+//                    //Stop the SdlService
+//                    stopSelf();
+//                }
+//            }
+//        }else if(forceConnect){
+//            proxy.forceOnConnected();
+//        }
+//
+//        //use START_STICKY because we want the SDLService to be explicitly started and stopped as needed.
+//        return START_STICKY;
     }
 
     @Override
