@@ -12,12 +12,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <uses-feature android:name="android.hardware.usb.accessory"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name="com.smartdevicelink.transport.USBAccessoryAttachmentActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
         </activity>
 
         <service
@@ -30,7 +41,7 @@
             android:process="com.smartdevicelink.router" />
 
         <receiver
-            android:name=".SdlReceiver"
+            android:name="com.ghelius.sdl.test.sdltest.SdlReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -39,6 +50,7 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED"/>
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
                 <action android:name="sdl.router.startservice" />
+                <action android:name="com.smartdevicelink.USB_ACCESSORY_ATTACHED"/> <!--For AOA -->
             </intent-filter>
         </receiver>
     </application>

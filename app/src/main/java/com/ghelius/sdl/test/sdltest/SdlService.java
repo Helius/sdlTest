@@ -2,7 +2,10 @@ package com.ghelius.sdl.test.sdltest;
 
 import android.app.Service;
 import android.content.Intent;
+import android.hardware.usb.UsbAccessory;
+import android.hardware.usb.UsbManager;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.smartdevicelink.exception.SdlException;
 import com.smartdevicelink.proxy.SdlProxyALM;
@@ -69,7 +72,11 @@ import com.smartdevicelink.proxy.rpc.UnsubscribeVehicleDataResponse;
 import com.smartdevicelink.proxy.rpc.UnsubscribeWayPointsResponse;
 import com.smartdevicelink.proxy.rpc.UpdateTurnListResponse;
 import com.smartdevicelink.proxy.rpc.enums.SdlDisconnectedReason;
+import com.smartdevicelink.transport.BaseTransportConfig;
 import com.smartdevicelink.transport.TransportConstants;
+import com.smartdevicelink.transport.USBTransportConfig;
+
+import static android.provider.UserDictionary.Words.APP_ID;
 
 public class SdlService extends Service implements IProxyListenerALM {
     public SdlService() {
@@ -78,18 +85,24 @@ public class SdlService extends Service implements IProxyListenerALM {
     //The proxy handles communication between the application and SDL
     private SdlProxyALM proxy = null;
 
-    //...
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        boolean forceConnect = intent !=null && intent.getBooleanExtra(TransportConstants.FORCE_TRANSPORT_CONNECTED, false);
+        boolean forceConnect = intent != null && intent.getBooleanExtra(TransportConstants.FORCE_TRANSPORT_CONNECTED, false);
         if (proxy == null) {
             try {
-                //Create a new proxy using Bluetooth transport
-                //The listener, app name,
-                //whether or not it is a media app and the applicationId are supplied.
-                proxy = new SdlProxyALM(this.getBaseContext(),this, "Hello SDL App", true, "8675309");
+                BaseTransportConfig transport = null;
+
+                if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.HONEYCOMB) {
+                    if (intent != null && intent.hasExtra(UsbManager.EXTRA_ACCESSORY)) {
+                        transport = new USBTransportConfig(getBaseContext(), (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY), false, false); // create USB transport
+                    }
+                } else {
+                    Log.e("SdlService", "Unable to start proxy. Android OS version is too low"); // optional
+                }
+
+                if (transport != null) {
+                    proxy = new SdlProxyALM(this.getBaseContext(), this, "Hello SDL App", true, "8675309");
+                }
+
             } catch (SdlException e) {
                 //There was an error creating the proxy
                 if (proxy == null) {
@@ -97,33 +110,12 @@ public class SdlService extends Service implements IProxyListenerALM {
                     stopSelf();
                 }
             }
-        }else if(forceConnect){
+        } else if (forceConnect) {
             proxy.forceOnConnected();
         }
 
         //use START_STICKY because we want the SDLService to be explicitly started and stopped as needed.
         return START_STICKY;
-
-//        boolean forceConnect = intent !=null && intent.getBooleanExtra(TransportConstants.FORCE_TRANSPORT_CONNECTED, false);
-//        if (proxy == null) {
-//            try {
-//                //Create a new proxy using Bluetooth transport
-//                //The listener, app name,
-//                //whether or not it is a media app and the applicationId are supplied.
-//                proxy = new SdlProxyALM(this.getBaseContext(),this, "Hello SDL App", true, "8675309");
-//            } catch (SdlException e) {
-//                //There was an error creating the proxy
-//                if (proxy == null) {
-//                    //Stop the SdlService
-//                    stopSelf();
-//                }
-//            }
-//        }else if(forceConnect){
-//            proxy.forceOnConnected();
-//        }
-//
-//        //use START_STICKY because we want the SDLService to be explicitly started and stopped as needed.
-//        return START_STICKY;
     }
 
     @Override
@@ -151,7 +143,7 @@ public class SdlService extends Service implements IProxyListenerALM {
     @Override
     public void onOnHMIStatus(OnHMIStatus notification) {
 
-        switch(notification.getHmiLevel()) {
+        switch (notification.getHmiLevel()) {
             case HMI_FULL:
                 //send welcome message, addcommands, subscribe to buttons ect
                 break;
