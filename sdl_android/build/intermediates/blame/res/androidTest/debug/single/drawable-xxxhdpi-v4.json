@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/eugene/src/sdlTest/sdl_android/build/intermediates/res/merged/androidTest/debug/drawable-xxxhdpi-v4/ic_sdl.png",
+        "source": "/home/eugene/src/sdlTest/sdl_android/build/intermediates/bundles/debug/res/drawable-xxxhdpi-v4/ic_sdl.png"
+    },
+    {
+        "merged": "/home/eugene/src/sdlTest/sdl_android/build/intermediates/res/merged/androidTest/debug/drawable-xxxhdpi-v4/sdl_tray_icon.png",
+        "source": "/home/eugene/src/sdlTest/sdl_android/build/intermediates/bundles/debug/res/drawable-xxxhdpi-v4/sdl_tray_icon.png"
+    }
+]
